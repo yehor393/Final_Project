@@ -1,4 +1,4 @@
-from collections.abc import Iterator
+#from collections.abc import Iterator
 from error_handl_decorator import error_handling_decorator
 from error_handl_decorator import CustomError
 #from collections import UserDict
@@ -8,10 +8,10 @@ from error_handl_decorator import CustomError
 from classes import *
 
 
-# parser
-#@error_handling_decorator
+# commands parser
+@error_handling_decorator
 def parse_input(user_input):
-    for request in commands:  # commands: hello, search, show all, contact, add, remove, change
+    for request in commands:  # dict with commands
         if user_input.startswith(request):
             func = commands[request]
 
@@ -59,6 +59,10 @@ def parse_input(user_input):
                 name = input('please provide a contact name: ')
                 birth_date = input('please provide a bithday in a format YYYY-MM-DD: ')
                 return func(name, birth_date)
+            
+            elif func == birthdays_after_days:
+                number_of_days = input("please provide number of days from current date: ")
+                return func(number_of_days)
             
             else:  #run func which don't need args. eg.hello, help, show all
                 return func()
@@ -148,7 +152,7 @@ def remove_info(name, field_to_remove, phone=None):
 # show contact details of user
 def show_contact (name): 
     if name not in phone_book:
-        raise CustomError("please provide a valid name")
+        raise CustomError("name now found, please provide a valid name")
     
     record = phone_book[name]
     phone_numbers = []
@@ -252,6 +256,23 @@ def dtb(name,notused=None, notused2=None, notused3=None):
             raise CustomError ("no birthday recorded")
     return record.days_to_birthday()
 
+def birthdays_after_days(number_of_days):
+    result = []
+    
+    current_date = datetime.date.today()
+    date_to_check = current_date + datetime.timedelta(days=float(number_of_days))
+    
+    for name, record in phone_book.items():
+        contact_birthday = record.birthday.value
+        if contact_birthday.month == date_to_check.month and contact_birthday.day == date_to_check.day:
+            result.append(show_contact(name))
+    
+    if len(result) == 0:
+        raise CustomError(f"no birthdays in {number_of_days} days")
+    
+    return ';\n'.join(result)
+
+
 def help():
     try:
         with open(r'./help.txt', 'r') as file:
@@ -272,6 +293,7 @@ commands = {
     "hello": hello,
     "search": search,
     "dtb": dtb,
+    "bad": birthdays_after_days,
     "help": help,
 }
 

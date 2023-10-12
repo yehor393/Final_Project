@@ -12,3 +12,4 @@ page - to display specific page of the address book
 contact - to display the contact information of the specific contact
 dtb - to calculate days to birthday of the specific contact
 help - to display a short guide 
+exit / good bye / close - any of these commans will close the bot and save all changes
