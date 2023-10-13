@@ -35,10 +35,8 @@ class Phone(Field):
     
     @Field.value.setter
     def value(self, new_value: str):
-        if new_value.isdigit() or new_value==None:
-            self._value = new_value
-        else:
-            raise CustomError("phone number should contain digits only")
+        self._value = new_value
+
 
 
 class Birthday(Field):
@@ -47,22 +45,7 @@ class Birthday(Field):
     
     @Field.value.setter
     def value(self, new_value: str):
-        # check of birthday format
-        if not re.match(r'\d{4}-\d{2}-\d{2}', new_value):
-            raise CustomError("please enter a valid birthdate in the format YYYY-MM-DD")
-
-        # convert to datetime format
-        try:
-            date_value = datetime.datetime.strptime(new_value, "%Y-%m-%d")
-        except:
-            raise CustomError("please enter a valid birthdate in the format YYYY-MM-DD")
-        
-        # check the date correctness
-        if not (1900 <= date_value.year <= datetime.date.today().year and
-                    1 <= date_value.month <= 12 and
-                    1 <= date_value.day <= 31):
-                raise CustomError("please enter a valid birthdate in the format YYYY-MM-DD")
-        dob = date_value.date()
+        dob = new_value.date()
         self._value = dob
     
 
@@ -72,8 +55,6 @@ class Email(Field):
     
     @Field.value.setter
     def value(self, new_value: str):
-        if not re.match(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b', new_value):
-            return CustomError("please provide an email in the correct format")
         self._value = new_value
 
 
@@ -158,6 +139,10 @@ class AddressBook(UserDict):
             self.data = deserialized_book
         except:
             pass
+    
+    def save_changes():
+        with open(phone_book_file, "wb") as fh:
+                pickle.dump(phone_book, fh)
 
     def add_record(self, record: Record):
         self.data[record.name.value] = record
