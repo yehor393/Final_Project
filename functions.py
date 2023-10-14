@@ -121,6 +121,8 @@ class Record:
 
         return days_until_birthday
 
+    
+
     def add_new_phone(self, phone): 
         self.phones.append(Phone(value=phone))
 
@@ -220,6 +222,7 @@ def parse_input(user_input):
                 
                 return func(name, info_to_delete)
             
+            
             elif func == hello:
                 return func()
             
@@ -231,11 +234,31 @@ def parse_input(user_input):
                 name = input('please provide a contact name: ')
                 birth_date = input('please provide a bithday in a format YYYY-MM-DD: ')
                 return func(name, birth_date) 
+            
+            elif func == show_birthdays_soon:
+                  while True:
+                    try:
+                        days = int(input('Enter the number of days: '))
+                        break  # Вихід із циклу, якщо користувач ввів число правильно
+                    except ValueError:
+                        print("Please enter a valid number.")
 
+                  return func(days)
         
     raise CustomError("please provide a valid command")
 
+#shows upcoming birthdays
+def show_birthdays_soon(days):
+    result = []
+    for name, record in phone_book.items():
+        days_until_birthday = record.days_to_birthday()
 
+        if days_until_birthday is not None and 0 <= days_until_birthday <= days:
+            result.append(show_contact(name))
+    if result:
+        return ';\n'.join(result)
+    else:
+        raise CustomError("There are no birthday contacts for the specified number of days")
 # adding new contact/phone number
 def add_contact (name, phone=None, birthday=None, email=None, address=None, note=None): 
     if not name:  
@@ -354,6 +377,8 @@ def show_contact (name):
     return f"{name}: {phone_str}, {birthday_str}, {email_str}, {address_str}, {note_str}"
 
 
+
+
 # show all contacts info
 def show_all():
     contacts = []
@@ -434,5 +459,6 @@ commands = {
     "hello": hello,
     "search": search,
     "dtb": dtb,
+    "show birthday soon": show_birthdays_soon,
 }
 
