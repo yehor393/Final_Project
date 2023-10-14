@@ -276,3 +276,5 @@ commands = {
     "dtb": dtb,
     "help": help,
 }
+
+тест Єгор
