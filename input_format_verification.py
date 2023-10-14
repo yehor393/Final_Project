@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 import re
 
 
@@ -35,6 +35,7 @@ def dob_input():
         else: 
             print("please enter a valid birthdate in the format YYYY-MM-DD. Try again: ")
 
+
 def email_input():
     def email_format_check (email):
         if not email:
@@ -54,6 +55,7 @@ def email_input():
             
         else: 
             print("please provide an email in the correct format. Try again: ")
+
 
 def phone_input():
     def phone_format_check (phone_number):
