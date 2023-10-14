@@ -10,7 +10,7 @@ from input_format_verification import *
 
 
 # commands parser, which calls the functions providing needed arguments
-@error_handling_decorator
+#@error_handling_decorator
 def parse_input(user_input):
     for request in commands:  # dict with commands
         if user_input.startswith(request):
