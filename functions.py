@@ -58,9 +58,19 @@ def parse_input(user_input):
             
             elif func == dtb:
                 name = input('please provide a contact name: ')
-                birth_date = dob_input()
-                return func(name, birth_date)
+                return func(name)
             
+            elif func == show_birthdays_soon:
+                  while True:
+                    try:
+                        days = int(input('Enter the number of days: '))
+                        break  # Вихід із циклу, якщо користувач ввів число правильно
+                    except ValueError:
+                        print("Please enter a valid number.")
+
+                  return func(days)
+            
+
             else:  #run func which don't need args. eg.hello, help, show all
                 return func()
 
@@ -232,9 +242,14 @@ def search (search_word):
             birthday_str = record.birthday.value.strftime('%Y-%m-%d')
         except AttributeError:
             birthday_str = "no birthday recorded"
+        
+        try:
+            note_str = record.note.value
+        except AttributeError:
+            note_str = "no note recorded"
 
         
-        if (search_word in name) or (search_word in phone_numbers) or (search_word == birthday_str) or (search_word in record.note.value):
+        if (search_word in name) or (search_word in phone_numbers) or (search_word == birthday_str) or (search_word in note_str):
             result.append(show_contact(name))
             
 
@@ -244,7 +259,7 @@ def search (search_word):
         raise CustomError("nothing found")
 
 
-def dtb(name,notused=None, notused2=None, notused3=None):
+def dtb(name):
     if name not in phone_book:
         raise CustomError("please provide a valid name")
     
@@ -252,6 +267,20 @@ def dtb(name,notused=None, notused2=None, notused3=None):
     if not hasattr(record, 'birthday'):
             raise CustomError ("no birthday recorded")
     return record.days_to_birthday()
+
+
+#shows upcoming birthdays
+def show_birthdays_soon(days):
+    result = []
+    for name, record in phone_book.items():
+        days_until_birthday = record.days_to_birthday()
+
+        if days_until_birthday is not None and 0 <= days_until_birthday <= days:
+            result.append(show_contact(name))
+    if result:
+        return ';\n'.join(result)
+    else:
+        raise CustomError("There are no birthday contacts for the specified number of days")
 
 
 def help():
@@ -274,6 +303,6 @@ commands = {
     "hello": hello,
     "search": search,
     "dtb": dtb,
+    "show birthday soon": show_birthdays_soon,
     "help": help,
 }
-# Hi from Vadim+++
