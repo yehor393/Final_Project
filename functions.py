@@ -7,11 +7,35 @@ from error_handl_decorator import CustomError
 # import pickle
 from classes import *
 from input_format_verification import *
+import difflib  # matches library
+
+
+# parameter cutoff regulates sensitivity for matching, 1.0 - full match, 0.0 - input always matches
+def find_closest_match(user_input, commands):
+    closest_match = difflib.get_close_matches(user_input, commands, n=1, cutoff=0.6)
+    if closest_match:
+        return closest_match[0]
+    else:
+        return None
+
+
+def check_command(user_input, commands):
+    if user_input in commands:
+        return user_input
+
+    closest_match = find_closest_match(user_input, commands)
+    if closest_match:
+        print(closest_match)
+        return closest_match
+    else:
+        return None
+
 
 
 # commands parser, which calls the functions providing needed arguments
 @error_handling_decorator
 def parse_input(user_input):
+    user_input = check_command(user_input, commands)
     for request in commands:  # dict with commands
         if user_input.startswith(request):
             func = commands[request]
@@ -303,6 +327,6 @@ commands = {
     "hello": hello,
     "search": search,
     "dtb": dtb,
-    "show birthday soon": show_birthdays_soon,
+    "sbs": show_birthdays_soon,
     "help": help,
 }
