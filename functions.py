@@ -330,5 +330,3 @@ commands = {
     "sbs": show_birthdays_soon,
     "help": help,
 }
-
-тест Єгор
