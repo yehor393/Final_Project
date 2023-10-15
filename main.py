@@ -1,5 +1,5 @@
-from functions import parse_input, phone_book_file, phone_book
-import pickle
+from functions import parse_input
+from classes import AddressBook
 
 # tuple of commands to close the bot
 close_app = ('exit', 'good bye', 'close') 
@@ -11,10 +11,7 @@ def main():
 
         if user_input.startswith(close_app):
             print("Good bye!")
-
-            with open(phone_book_file, "wb") as fh:
-                pickle.dump(phone_book, fh)
-
+            AddressBook.save_changes()
             break
 
         result = parse_input(user_input) 
