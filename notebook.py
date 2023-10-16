@@ -45,7 +45,7 @@ class NoteBook(UserDict):
 
     def add_note(self, note: Note) -> None:
         if note.id in self.data:
-            raise CustomError("Note is already exists!")
+            raise CustomError("Note already exists!")
         note.id = self.gen_id()
         self.data[note.id] = note
         self.__update_tag_cloud()
