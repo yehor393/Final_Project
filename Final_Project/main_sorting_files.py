@@ -1,7 +1,7 @@
 import shutil
 import sys
-import scan
-import normalize
+import Final_Project.scan
+import Final_Project.normalize
 from pathlib import Path
 
 
@@ -19,7 +19,7 @@ def handle_file(path, root_folder, dist):
     target_folder.mkdir(exist_ok=True)
 
     # Normalize the file name and combine this with origin extension
-    new_path = target_folder / (normalize.normalize(path.name) + path.suffix)
+    new_path = target_folder / (Final_Project.normalize(path.name) + path.suffix)
 
     # Move the file to the new path
     path.replace(new_path)
@@ -40,7 +40,7 @@ def handle_archive(path, root_folder):
     :return: None
     """
     #
-    new_name = normalize.normalize(path.with_suffix('').name)
+    new_name = Final_Project.normalize(path.with_suffix('').name)
 
     # Creates the archive folder if it doesn't exist
     archive_folder = root_folder / new_name
@@ -116,33 +116,33 @@ def main(folder_path):
     :param folder_path: The path to the folder containing the unorganized files.
     :return: None
     """
-    scan.scan(folder_path)
+    Final_Project.scan(folder_path)
 
-    for file in scan.images_files:
+    for file in Final_Project.scan.images_files:
         file = Path(file)
         handle_file(file, folder_path, "Images")
 
-    for file in scan.documents_files:
+    for file in Final_Project.scan.documents_files:
         file = Path(file)
         handle_file(file, folder_path, "Documents")
 
-    for file in scan.audio_files:
+    for file in Final_Project.scan.audio_files:
         file = Path(file)
         handle_file(file, folder_path, "Audio")
 
-    for file in scan.video_files:
+    for file in Final_Project.scan.video_files:
         file = Path(file)
         handle_file(file, folder_path, "Video")
 
-    for file in scan.others:
+    for file in Final_Project.scan.others:
         file = Path(file)
         handle_file(file, folder_path, "Others")
 
-    for file in scan.unknown:
+    for file in Final_Project.scan.unknown:
         file = Path(file)
         handle_file(file, folder_path, "Unknown")
 
-    for file in scan.archives_files:
+    for file in Final_Project.scan.archives_files:
         file = Path(file)
         handle_archive(file, folder_path)
 

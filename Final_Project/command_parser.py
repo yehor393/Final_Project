@@ -1,5 +1,5 @@
-from functions import *
-from error_handl_decorator import error_handling_decorator
+from Final_Project.functions import *
+from Final_Project.error_handl_decorator import error_handling_decorator
 
 # commands parser, which calls the functions providing needed arguments
 @error_handling_decorator

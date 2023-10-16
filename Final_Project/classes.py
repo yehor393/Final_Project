@@ -1,6 +1,6 @@
 # from collections.abc import Iterator
 # from error_handl_decorator import error_handling_decorator
-from error_handl_decorator import CustomError
+from Final_Project.error_handl_decorator import CustomError
 from collections import UserDict
 import re
 import datetime
