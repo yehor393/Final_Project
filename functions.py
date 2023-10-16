@@ -186,6 +186,7 @@ def remove_info(name, field_to_remove, phone=None):
     if phone:
         record.remove_phone(phone)
         return "the phone number successfully removed"
+    
     elif field_to_remove == 'birthday':
         if hasattr(record, 'birthday'):
             del record.birthday
@@ -206,6 +207,7 @@ def remove_info(name, field_to_remove, phone=None):
             return "the address successfully removed"
         else:
             raise CustomError("no address exist for this contact")
+        
     elif field_to_remove == 'note':
         if hasattr(record, 'note'):
             del record.note 
