@@ -299,7 +299,7 @@ def show_birthdays_soon(days):
     for name, record in phone_book.items():
         days_until_birthday = record.days_to_birthday()
 
-        if days_until_birthday is not None and 0 <= days_until_birthday <= days:
+        if days_until_birthday is not None and days_until_birthday == days:
             result.append(show_contact(name))
     if result:
         return ';\n'.join(result)
