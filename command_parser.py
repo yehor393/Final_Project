@@ -127,6 +127,39 @@ def parse_input(user_input):
                 tags = input('please provide tegs separeted with spaces: ')
                 return func(id, tags)
 
+            
+            elif func == sort_files:
+                folder_path = input("Enter the path to the folder containing unorganized files: ")
+                return func(folder_path)
+
+            elif func == send_sms:
+                contact_name = name_input()
+                contact = phone_book.get(contact_name)
+                if contact:
+                    message = input("Enter the SMS message: ")
+                    for phone in contact.phones:
+                        print(f'Sending to the number {phone}')
+                        try:
+                            send_sms(phone, message)
+                        except Exception as e:
+                            print(f"Error while sending SMS: {e}")
+                else:
+                    print("Contact not found")
+
+            elif func == call:
+                contact_name = name_input()
+                contact = phone_book.get(contact_name)
+                if contact:
+                    message = input("Enter the message: ")
+                    for phone in contact.phones:
+                        print(f'Calling to the number {phone}')
+                        try:
+                            call(phone, message)
+                        except Exception as e:
+                            print(f"Error while calling: {e}")
+                else:
+                    print("Contact not found")
+
 
             else:  #run func which don't need args. eg.hello, help, show all
                 return func()
