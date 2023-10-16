@@ -255,7 +255,7 @@ def dtb(name):
     return record.days_to_birthday()
 
 
-#shows upcoming birthdays
+#shows upcoming birthdays/
 def show_birthdays_soon(days):
     result = []
     for name, record in phone_book.items():
