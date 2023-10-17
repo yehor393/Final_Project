@@ -84,7 +84,7 @@ def parse_input(user_input):
                   while True:
                     try:
                         days = int(input('Enter the number of days: '))
-                        break  # Вихід із циклу, якщо користувач ввів число правильно
+                        break  
                     except ValueError:
                         print("Please enter a valid number.")
 
@@ -124,7 +124,7 @@ def parse_input(user_input):
 
             
             elif func == sort_files:
-                folder_path = input("Enter the path to the folder containing unorganized files: ")
+                folder_path = path_input()
                 return func(folder_path)
 
             elif func == send_sms:

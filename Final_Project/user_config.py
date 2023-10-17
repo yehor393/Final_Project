@@ -1,6 +1,6 @@
 from collections import UserDict
 from pathlib import Path
-from error_handl_decorator import CustomError
+from Final_Project.error_handl_decorator import CustomError
 
 class Config(UserDict):
     def __init__(self, config_file: str) -> None:
