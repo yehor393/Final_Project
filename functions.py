@@ -127,6 +127,9 @@ def find_closest_match(user_input, commands):
 
 
 def check_command(user_input, commands):
+    if user_input in commands:
+        return user_input
+    
     closest_match = find_closest_match(user_input, commands)
     if closest_match:
         print(closest_match)
