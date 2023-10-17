@@ -6,3 +6,4 @@ auth_token=c72560502a1d65f1173a7a0bb7e13389
 account_phone=+16173796725
 help_file=help.txt
 contacts_per_page=2
+user_folder=/home/mike/Desktop
