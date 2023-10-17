@@ -126,22 +126,34 @@ class Record:
         if not phone_found:
             raise CustomError("phone number was not found")
 
-
-phone_book_file = r'./phone_book'
-
-
 class AddressBook(UserDict):
-    def __init__(self):
+    def __init__(self, file_name: str=None):
+        self.__file_name = None
+        self.file_name = file_name
         super().__init__()
+        self.restore()
+    
+    @property
+    def file_name(self):
+        return self.__file_name
+    
+    @file_name.setter
+    def file_name(self, file_name:str):
+        self.__file_name = file_name
+        self.restore()
+
+    def restore(self):
         try:
-            with open(phone_book_file, "rb") as fh:
+            with open(self.file_name, "rb") as fh:
                 deserialized_book = pickle.load(fh)
             self.data = deserialized_book
+            succsess = True
         except:
-            pass
-    
-    def save_changes():
-        with open(phone_book_file, "wb") as fh:
+            succsess = False
+        return succsess
+
+    def save_changes(self):
+        with open(self.file_name, "wb") as fh:
                 pickle.dump(phone_book, fh)
 
     def add_record(self, record: Record):
