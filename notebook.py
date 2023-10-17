@@ -45,11 +45,19 @@ class Note:
                 f'tags: {" ".join(self.tags)}'
 
 class NoteBook(UserDict):
-    def __init__(self, file_name: str) -> None:
+    def __init__(self, file_name: str=None) -> None:
         self.tag_cloud = set()  #all unique tags used in notebook
+        self.__file_name = None
         self.file_name = file_name
+
+    @property
+    def file_name(self):
+        return self.__file_name
+    
+    @file_name.setter
+    def file_name(self, file_name:str):
+        self.__file_name = file_name
         self.restore()
-        self.__update_tag_cloud()
 
     def add_note(self, note: Note) -> None:
         if note.id in self.data:
@@ -92,8 +100,12 @@ class NoteBook(UserDict):
                 restored_data = load(f)
                 self.data = restored_data.data
                 self.tag_cloud = restored_data.tag_cloud
+                succsess = True
         except:
             self.data = {}
+            succsess = False
+
+        return succsess
 
     def find_by_tag(self, tags: [str], intersec: bool=False, show_desc: bool=True) -> [Note]:
         def get_key(note: Note) -> datetime:

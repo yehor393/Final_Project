@@ -6,9 +6,12 @@ from notebook import *
 from pathlib import Path
 import main_sorting_files
 from twilio.rest import Client
+from user_config import Config
 
-notes = NoteBook("notest.bin")
 
+CONFIG_FILE = "bot_config.txt"
+config = Config(CONFIG_FILE)
+notes = NoteBook()
 
 #Luda
 def view_notes():
@@ -340,7 +343,7 @@ def show_birthdays_soon(days):
 
 def guide():
     try:
-        with open(r'./help.txt', 'r') as file:
+        with open(config["help_file"], 'r') as file:
             file_content = file.read()
         return file_content
     except FileNotFoundError:
@@ -353,32 +356,61 @@ def sort_files(folder_path):
 
 
 def send_sms(phone_number, message):
-    account_sid = 'ACb5c2ef81d62b89df899d7eb7a74be13d'
-    auth_token = 'd8cb7333e1a141c64a1654582231bbc4'
+    account_sid = config["account_sid"]
+    auth_token = config["auth_token"]
+    
     client = Client(account_sid, auth_token)
-
+    
     message = client.messages.create(
-        from_='+16173796725',
+        from_=config["account_phone"],
         body=message,
         to=phone_number
     )
-
-    print(message.sid)
-
+    
+    return message.sid
 
 def call(phone_number, message):
-    account_sid = 'ACb5c2ef81d62b89df899d7eb7a74be13d'
-    auth_token = 'd8cb7333e1a141c64a1654582231bbc4'
+    account_sid = config["account_sid"]
+    auth_token = config["auth_token"]
     client = Client(account_sid, auth_token)
 
     make_call = client.calls.create(
         twiml=f'<Response><Say>{message}</Say></Response>',
         to=phone_number,
-        from_='+16173796725'
+        from_=config["account_phone"]
     )
 
-    print(make_call.sid)
+    return make_call.sid
 
+def bot_config():
+    if not config.data:
+        return False
+    
+    if not "user_folder" in config:
+        config["user_folder"] = input_config("user_folder")
+    notes.file_name = Path(config["user_folder"], config["notebook_file"])
+    phone_book.file_name = Path(config["user_folder"], config["addressbook_file"])
+
+    config.save_config()
+    return True
+
+def input_config(param: str):
+    correct = False
+    value = ""
+    while not correct:
+        if param == "user_folder":
+            value = input("Please enter existing folder where all data will be stored: ")
+            value = Path(value)
+            correct = value.exists()
+            response = "Path does not exist!"
+        if not correct:
+            print(response)
+    
+    return value
+
+def close_bot():
+    phone_book.save_changes()
+    return "Good bye!"
 
 commands = {
     "add": add_contact,
@@ -403,4 +435,8 @@ commands = {
     "sms": send_sms,
     "call": call,
     "find tags": find_by_tag,
+    "config": bot_config,
+    "good bye": close_bot,
+    "close": close_bot,
+    "exit": close_bot,
 }
