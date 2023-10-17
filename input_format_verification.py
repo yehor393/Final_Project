@@ -1,6 +1,7 @@
 import datetime
 import re
 from classes import phone_book
+import os
 
 def name_input():
     def name_validation(name):
@@ -90,3 +91,18 @@ def phone_input():
             return phone
         else:
             print("Phone number should start with + and contain digits only. Try again")
+
+def path_input():
+    def path_check(path):
+        if not os.path.exists(path):
+            return False
+        else:
+            return path
+
+    while True:
+        input_path = input("Enter the path to the folder containing unorganized files: ")
+        folder_path = path_check(input_path)
+        if folder_path != False:
+            return folder_path
+        else:
+            print("Provided path is not valid. Try again") 

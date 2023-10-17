@@ -124,7 +124,7 @@ def parse_input(user_input):
 
             
             elif func == sort_files:
-                folder_path = input("Enter the path to the folder containing unorganized files: ")
+                folder_path = path_input()
                 return func(folder_path)
 
             elif func == send_sms:

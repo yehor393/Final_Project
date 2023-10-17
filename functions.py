@@ -348,7 +348,6 @@ def guide():
 
 
 def sort_files(folder_path):
-    print(f'Start in {folder_path}')
     main_sorting_files.main(Path(folder_path))
 
 
