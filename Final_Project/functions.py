@@ -1,26 +1,30 @@
-from Final_Project.error_handl_decorator import CustomError
-from Final_Project.classes import *
-from Final_Project.input_format_verification import *
+from error_handl_decorator import CustomError
+from classes import *
+from input_format_verification import *
 import difflib  # matches library
-from Final_Project.notebook import *
+from notebook import *
 from pathlib import Path
-import Final_Project.main_sorting_files
+import main_sorting_files
 from twilio.rest import Client
+from user_config import Config
 
-notes = NoteBook("notest.bin")
 
+CONFIG_FILE = "bot_config.txt"
+config = Config(CONFIG_FILE)
+notes = NoteBook()
 
 #Luda
 def view_notes():
     message = ""
     for note in notes.values():
-        message = str(note) + "\n"
+        message += "\n" + str(note) + "\n"
     if not message:
         message = "You have no notes yet"
     return message
 
 def add_note(text: str, tags: str) -> str:
-    note = Note(text, tags)
+    tag_list = str_to_tags(tags)
+    note = Note(text, tag_list)
     notes.add_note(note)
     return "Note was successfully added"
 
@@ -35,8 +39,9 @@ def edit_text(id: str, new_text: str) -> str:
     return "Note was successfully edited"
 
 def add_tags(id: str, tags: str) -> str:
+    tag_list = str_to_tags(tags)
     note = notes.find_id(id)
-    note.add_tags(tags)
+    note.add_tags(tag_list)
     notes.save()
     return f"Tags was successfully added to note with id {id}"
 
@@ -45,6 +50,71 @@ def delete_tag(id: str, tag: str) -> str:
     note.remowe_tag(tag)
     notes.save()
     return "Tags was successfully deleted"
+
+def find_by_tag(tags: str, show_desc: bool) -> str:
+    intersec = " and " in tags
+    tags = tags.replace(" and ", " ").replace(" or ", " ")
+    tag_list = []
+    tag_list.extend(tags.split(" "))
+    for i in range(len(tag_list)):
+        if not tag_list[i].startswith("#"):
+            tag_list[i] = "#" + tag_list[i]
+    
+    result = notes.find_by_tag(tag_list, intersec, show_desc)
+
+    message = ""
+    for note in result:
+        message += "\n" + str(note) + "\n"
+    if not message:
+        message = "I didn't find anything. Correct search conditions."
+    return message
+
+def input_note_params(param: str):
+    correct = False
+    value = ""
+    while not correct:
+        if param == "id":
+            value = input('please provide a note id: ')
+            correct = value in notes
+        
+        elif param == "text":
+            print('please write your note here (duble enter to finish): ')
+            value = []
+            while True:
+                new_text = input()
+                if not new_text:
+                    break
+                value.append(new_text)
+            value = '\n'.join(value)
+            correct = value != ""
+
+        elif param == "tag":
+            value = input('please giva me a tag please: ')
+            correct = value in notes.tag_cloud
+
+        elif param == "tags":
+            value = input('please provide tegs separeted with spaces: ')
+            correct = value != ""
+
+        elif param == "show_desc":
+            value = input("Show newest on the top (Y/N)? ")
+            value = value.lower() == "y"
+            correct = True
+
+        if not correct:
+            print("You have entered incorrect data. Try again please.")
+
+    return value
+
+def str_to_tags(text: str) -> [str]:
+    tags = []
+    for tag in text.split(" "):
+        if not tag:
+            continue
+        if not tag.startswith("#"):
+            tag = "#" + tag
+        tags.append(tag)
+    return tags
 
 
 # parameter cutoff regulates sensitivity for matching, 1.0 - full match, 0.0 - input always matches
@@ -119,6 +189,7 @@ def remove_info(name, field_to_remove, phone=None):
     if phone:
         record.remove_phone(phone)
         return "the phone number successfully removed"
+    
     elif field_to_remove == 'birthday':
         if hasattr(record, 'birthday'):
             del record.birthday
@@ -139,6 +210,7 @@ def remove_info(name, field_to_remove, phone=None):
             return "the address successfully removed"
         else:
             raise CustomError("no address exist for this contact")
+        
     elif field_to_remove == 'note':
         if hasattr(record, 'note'):
             del record.note 
@@ -199,7 +271,7 @@ def show_all():
 def show_page(page):
     try:
         page_number = int(page)
-        contacts_per_page = 2
+        contacts_per_page = int(config["contacts_per_page"])
 
         if page_number < 1:
             raise CustomError("pages start from 1")
@@ -271,7 +343,7 @@ def show_birthdays_soon(days):
 
 def guide():
     try:
-        with open(r'./help.txt', 'r') as file:
+        with open(config["help_file"], 'r') as file:
             file_content = file.read()
         return file_content
     except FileNotFoundError:
@@ -284,32 +356,63 @@ def sort_files(folder_path):
 
 
 def send_sms(phone_number, message):
-    account_sid = 'ACb5c2ef81d62b89df899d7eb7a74be13d'
-    auth_token = 'd8cb7333e1a141c64a1654582231bbc4'
+    account_sid = config["account_sid"]
+    auth_token = config["auth_token"]
+    
     client = Client(account_sid, auth_token)
-
+    
     message = client.messages.create(
-        from_='+16173796725',
+        from_=config["account_phone"],
         body=message,
         to=phone_number
     )
-
-    print(message.sid)
-
+    
+    return message.sid
 
 def call(phone_number, message):
-    account_sid = 'ACb5c2ef81d62b89df899d7eb7a74be13d'
-    auth_token = 'd8cb7333e1a141c64a1654582231bbc4'
+    account_sid = config["account_sid"]
+    auth_token = config["auth_token"]
     client = Client(account_sid, auth_token)
 
     make_call = client.calls.create(
         twiml=f'<Response><Say>{message}</Say></Response>',
         to=phone_number,
-        from_='+16173796725'
+        from_=config["account_phone"]
     )
 
-    print(make_call.sid)
+    return make_call.sid
 
+def bot_config():
+    if not config.data:
+        return False
+    
+    if not "user_folder" in config or not ["user_folder"]:
+        config["user_folder"] = input_config("user_folder")
+    Path(config["user_folder"]).mkdir(exist_ok=True)
+
+    notes.file_name = Path(config["user_folder"], config["notebook_file"])
+    phone_book.file_name = Path(config["user_folder"], config["addressbook_file"])
+
+    config.save_config()
+    return True
+
+def input_config(param: str):
+    correct = False
+    value = ""
+    while not correct:
+        if param == "user_folder":
+            value = input("Please enter path to folder where all data will be stored: ")
+            value = Path(value)
+            correct = True
+            response = "Path does not exist!"
+        if not correct:
+            print(response)
+    
+    return value
+
+def close_bot():
+    phone_book.save_changes()
+    return "Good bye!"
 
 commands = {
     "add": add_contact,
@@ -333,4 +436,9 @@ commands = {
     "sort files": sort_files,
     "sms": send_sms,
     "call": call,
+    "find tags": find_by_tag,
+    "config": bot_config,
+    "good bye": close_bot,
+    "close": close_bot,
+    "exit": close_bot,
 }

@@ -1,5 +1,5 @@
-from Final_Project.command_parser import parse_input
-from Final_Project.classes import AddressBook
+from command_parser import parse_input, bot_config
+from classes import AddressBook
 
 # tuple of commands to close the bot
 close_app = ('exit', 'good bye', 'close') 
@@ -7,17 +7,16 @@ close_app = ('exit', 'good bye', 'close')
 
 def main():
     while True:
-        user_input = input("your command (type 'guide' to display list of available commands): ").lower()
-
-        if user_input.startswith(close_app):
-            print("Good bye!")
-            AddressBook.save_changes()
+        if not bot_config():
+            print("There is no configuration file. Can not work without it! Good bye!")
             break
+        user_input = input("your command (type 'guide' to display list of available commands): ").lower()
 
         result = parse_input(user_input) 
         if result is not None: 
             print(result) 
-
+        if user_input.startswith(close_app):
+            break
 
 if __name__ == "__main__":
     main()
