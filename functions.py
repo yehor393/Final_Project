@@ -271,7 +271,7 @@ def show_all():
 def show_page(page):
     try:
         page_number = int(page)
-        contacts_per_page = 2
+        contacts_per_page = int(config["contacts_per_page"])
 
         if page_number < 1:
             raise CustomError("pages start from 1")
@@ -386,8 +386,10 @@ def bot_config():
     if not config.data:
         return False
     
-    if not "user_folder" in config:
+    if not "user_folder" in config or not ["user_folder"]:
         config["user_folder"] = input_config("user_folder")
+    Path(config["user_folder"]).mkdir(exist_ok=True)
+
     notes.file_name = Path(config["user_folder"], config["notebook_file"])
     phone_book.file_name = Path(config["user_folder"], config["addressbook_file"])
 
@@ -399,9 +401,9 @@ def input_config(param: str):
     value = ""
     while not correct:
         if param == "user_folder":
-            value = input("Please enter existing folder where all data will be stored: ")
+            value = input("Please enter path to folder where all data will be stored: ")
             value = Path(value)
-            correct = value.exists()
+            correct = True
             response = "Path does not exist!"
         if not correct:
             print(response)

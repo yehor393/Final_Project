@@ -11,7 +11,7 @@ def main():
             print("There is no configuration file. Can not work without it! Good bye!")
             break
         user_input = input("your command (type 'guide' to display list of available commands): ").lower()
-        
+
         result = parse_input(user_input) 
         if result is not None: 
             print(result) 

@@ -158,6 +158,7 @@ class AddressBook(UserDict):
 
     def add_record(self, record: Record):
         self.data[record.name.value] = record
+        self.save_changes()
 
     def iterator(self, n): # n-number of records per page. is defined in show_page function
         contacts_per_page = n
