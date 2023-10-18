@@ -1,13 +1,13 @@
-from Final_Project.error_handl_decorator import CustomError
-from Final_Project.classes import *
-from Final_Project.input_format_verification import *
+from error_handl_decorator import CustomError
+from classes import *
+from input_format_verification import *
 import difflib  # matches library
-from Final_Project.notebook import *
+from notebook import *
 from pathlib import Path
-import Final_Project.main_sorting_files
+import main_sorting_files
 from twilio.rest import Client
-from Final_Project.user_config import Config
-from Final_Project.gen_config import *
+from user_config import Config
+from gen_config import *
 
 config = Config(CONFIG_FILE)
 notes = NoteBook()
@@ -350,7 +350,7 @@ def guide():
 
 
 def sort_files(folder_path):
-    Final_Project.main_sorting_files.main(Path(folder_path))
+    main_sorting_files.main(Path(folder_path))
 
 
 def send_sms(phone_number, message):

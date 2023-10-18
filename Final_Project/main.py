@@ -1,5 +1,5 @@
-from Final_Project.command_parser import parse_input, bot_config
-from Final_Project.classes import AddressBook
+from command_parser import parse_input, bot_config
+from classes import AddressBook
 
 # tuple of commands to close the bot
 close_app = ('exit', 'good bye', 'close') 
