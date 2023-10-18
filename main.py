@@ -15,7 +15,7 @@ def main():
         result = parse_input(user_input) 
         if result is not None: 
             print(result) 
-        if user_input.startswith(close_app):
+        if result == "Good bye!":
             break
 
 if __name__ == "__main__":
