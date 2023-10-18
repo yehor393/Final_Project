@@ -134,7 +134,9 @@ def parse_input(user_input):
                     message = input("Enter the SMS message: ")
                     for phone in contact.phones:
                         print(f'Sending to the number {phone}')
-                        return func(phone, message)
+                        result = func(phone, message)
+                        print(result)
+                    return None
                 else:
                     return "Contact not found"
 
@@ -145,7 +147,9 @@ def parse_input(user_input):
                     message = input("Enter the message: ")
                     for phone in contact.phones:
                         print(f'Calling to the number {phone}')
-                        return func(phone, message)
+                        result = func(phone, message)
+                        print(result)
+                    return None
                 else:
                     return "Contact not found"
 

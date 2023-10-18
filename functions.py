@@ -367,9 +367,9 @@ def send_sms(phone_number, message):
             from_=config["account_phone"],
             body=message,
             to=phone_number)
-        message = "Message was successfully sended!"
+        message = f"Message was successfully sended on number {phone_number}!"
     except Exception as e:
-            message = f"{e.args[2]}. Check your calling settings."
+        raise CustomError(f"{e.args[2]}. Check your calling settings.")
     return message
 
 def call(phone_number, message):
@@ -388,9 +388,9 @@ def call(phone_number, message):
             machine_detection="DetectMessageEnd",
             machine_detection_timeout=0
         )
-        message = "Call was successfully doned!"
+        message = f"Call on number {phone_number} was successfully doned!"
     except Exception as e:
-        message = f"{e.args[2]}. Check your calling settings."
+        raise CustomError(f"{e.args[2]}. Check your calling settings.")
     
     return message
 
