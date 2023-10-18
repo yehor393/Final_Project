@@ -22,7 +22,7 @@ def handle_file(path, root_folder, dist):
     target_folder.mkdir(exist_ok=True)
 
     # Normalize the file name and combine this with origin extension
-    new_path = target_folder / (Final_Project.normalize(path.name) + path.suffix)
+    new_path = target_folder / (Final_Project.normalize.normalize(path.name) + path.suffix)
 
     # Move the file to the new path
     path.replace(new_path)
@@ -43,7 +43,7 @@ def handle_archive(path, root_folder):
     :return: None
     """
     #
-    new_name = Final_Project.normalize(path.with_suffix('').name)
+    new_name = Final_Project.normalize.normalize(path.with_suffix('').name)
 
     # Creates the archive folder if it doesn't exist
     archive_folder = root_folder / new_name
@@ -109,7 +109,7 @@ def get_folder_object(root_path):
 
 
 def main(folder_path):
-    Final_Project.scan(folder_path)
+    Final_Project.scan.scan(folder_path)
 
     categories = [
         ("Images", Final_Project.scan.images_files),
@@ -146,7 +146,7 @@ def main(folder_path):
 
 
 if __name__ == '__main__':
-    path = sys.argv[1]
+    path = Path(sys.argv[0]).parent
     print(f'Start in {path}')
 
     arg = Path(path)
