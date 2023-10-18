@@ -117,7 +117,7 @@ class Record:
             raise CustomError("phone number was not found")
 
     def remove_phone(self, phone):
-        phone_found = False
+        #phone_found = False
         for stored_phone in self.phones.copy():
             if str(stored_phone) == phone:
                 self.phones.remove(stored_phone)

@@ -6,7 +6,7 @@ setup(
     packages=find_packages(),
     author='group_5',
     description='bot-helper',
-    install_requires = ['twilio',],
+    install_requires = ['twilio','tqdm','colorama'],
     entry_points={
         'console_scripts': [
             'mycli = Final_Project.main:main'
