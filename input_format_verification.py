@@ -99,6 +99,8 @@ def phone_input():
                 return phone
             else:
                 print("Country code unknown . Please try again.")
+        else:
+            return None
 
 def path_input():
     def path_check(path):
