@@ -369,7 +369,7 @@ def send_sms(phone_number, message):
             to=phone_number)
         message = f"Message was successfully sended on number {phone_number}!"
     except Exception as e:
-            raise CustomError(f"{e.args[2]}. Check your calling settings.")
+        raise CustomError(f"{e.args[2]}. Check your calling settings.")
     return message
 
 def call(phone_number, message):

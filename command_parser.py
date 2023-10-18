@@ -132,7 +132,6 @@ def parse_input(user_input):
                 contact = phone_book.get(contact_name)
                 if contact:
                     message = input("Enter the SMS message: ")
-                    print(contact.phones)
                     for phone in contact.phones:
                         print(f'Sending to the number {phone}')
                         result = func(phone, message)
