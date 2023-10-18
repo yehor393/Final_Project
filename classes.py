@@ -6,12 +6,13 @@ import re
 import datetime
 import pickle
 
+
 # classes
 class Field:
     def __init__(self, value):
         self._value = None
         self.value = value
-    
+
     def __str__(self):
         return self.value
 
@@ -32,27 +33,26 @@ class Name(Field):
 class Phone(Field):
     def __init__(self, value):
         super().__init__(str(value))
-    
+
     @Field.value.setter
     def value(self, new_value: str):
         self._value = new_value
 
 
-
 class Birthday(Field):
-    def __init__(self, value): 
+    def __init__(self, value):
         super().__init__(value)
-    
+
     @Field.value.setter
     def value(self, new_value):
         dob = new_value.date()
         self._value = dob
-    
+
 
 class Email(Field):
     def __init__(self, value):
         super().__init__(str(value))
-    
+
     @Field.value.setter
     def value(self, new_value: str):
         self._value = new_value
@@ -77,7 +77,7 @@ class Note(Field):
 
 
 class Record:
-    def __init__(self, name, phone=None, birthday=None, email=None, address=None, note=None): 
+    def __init__(self, name, phone=None, birthday=None, email=None, address=None, note=None):
         self.name = Name(value=name)
         self.phones = []
         if phone:
@@ -94,18 +94,18 @@ class Record:
     def days_to_birthday(self):
         current_date = datetime.date.today()
         next_birthday = datetime.date(current_date.year, self.birthday.value.month, self.birthday.value.day)
-        
+
         if current_date > next_birthday:
             next_birthday = datetime.date(current_date.year + 1, self.birthday.value.month, self.birthday.value.day)
-            
+
         days_until_birthday = (next_birthday - current_date).days
 
         return days_until_birthday
 
-    def add_new_phone(self, phone): 
+    def add_new_phone(self, phone):
         self.phones.append(Phone(value=phone))
 
-    def amend_phone(self, name, new_phone, old_phone): 
+    def amend_phone(self, name, new_phone, old_phone):
         phone_found = False
         for stored_phone in self.phones.copy():
             if str(stored_phone) == old_phone:
@@ -126,19 +126,20 @@ class Record:
         if not phone_found:
             raise CustomError("phone number was not found")
 
+
 class AddressBook(UserDict):
-    def __init__(self, file_name: str=None):
+    def __init__(self, file_name: str = None):
         self.__file_name = None
         self.file_name = file_name
         super().__init__()
         self.restore()
-    
+
     @property
     def file_name(self):
         return self.__file_name
-    
+
     @file_name.setter
-    def file_name(self, file_name:str):
+    def file_name(self, file_name: str):
         self.__file_name = file_name
         self.restore()
 
@@ -154,13 +155,13 @@ class AddressBook(UserDict):
 
     def save_changes(self):
         with open(self.file_name, "wb") as fh:
-                pickle.dump(phone_book, fh)
+            pickle.dump(phone_book, fh)
 
     def add_record(self, record: Record):
         self.data[record.name.value] = record
         self.save_changes()
 
-    def iterator(self, n): # n-number of records per page. is defined in show_page function
+    def iterator(self, n):  # n-number of records per page. is defined in show_page function
         contacts_per_page = n
         contacts = list(self.data.keys())
         index = 0
@@ -168,5 +169,6 @@ class AddressBook(UserDict):
         while index < len(contacts):
             yield contacts[index:index + contacts_per_page]
             index += contacts_per_page
+
 
 phone_book = AddressBook()

@@ -1,8 +1,11 @@
-import shutil
 import sys
+import time
+from pathlib import Path
+from tqdm import tqdm
+from colorama import Fore, Style
+import shutil
 import scan
 import normalize
-from pathlib import Path
 
 
 def handle_file(path, root_folder, dist):
@@ -106,47 +109,40 @@ def get_folder_object(root_path):
 
 
 def main(folder_path):
-    """
-    Organize files within a specified folder by categorizing and moving them to appropriate subfolders.
-
-    This function orchestrates the entire organization process. It first uses the 'scan' module to identify different
-    types of files and their extensions within the specified folder. Then, it iterates through each categorized list
-    of files (images, documents, audio, video, others, unknown, archives).
-
-    :param folder_path: The path to the folder containing the unorganized files.
-    :return: None
-    """
     scan.scan(folder_path)
 
-    for file in scan.images_files:
-        file = Path(file)
-        handle_file(file, folder_path, "Images")
+    categories = [
+        ("Images", scan.images_files),
+        ("Documents", scan.documents_files),
+        ("Audio", scan.audio_files),
+        ("Video", scan.video_files),
+        ("Others", scan.others),
+        ("Unknown", scan.unknown),
+    ]
 
-    for file in scan.documents_files:
-        file = Path(file)
-        handle_file(file, folder_path, "Documents")
+    # Iterate through the categories and process their respective files
+    for category_name, category_files in categories:
+        if category_files:
+            with tqdm(total=len(category_files), desc=f"Processing {category_name}") as pbar:
+                for file in category_files:
+                    file = Path(file)
+                    handle_file(file, folder_path, category_name)
+                    pbar.update(1)
 
-    for file in scan.audio_files:
-        file = Path(file)
-        handle_file(file, folder_path, "Audio")
+    # Process the "Archives" category if it contains files
+    if scan.archives_files:
+        with tqdm(total=len(scan.archives_files), desc="Processing Archives") as pbar:
+            for file in scan.archives_files:
+                file = Path(file)
+                handle_archive(file, folder_path)
+                pbar.update(1)
 
-    for file in scan.video_files:
-        file = Path(file)
-        handle_file(file, folder_path, "Video")
+    get_folder_object(folder_path)
 
-    for file in scan.others:
-        file = Path(file)
-        handle_file(file, folder_path, "Others")
+    # Add a small delay to ensure the final message is displayed correctly
+    time.sleep(0.1)
 
-    for file in scan.unknown:
-        file = Path(file)
-        handle_file(file, folder_path, "Unknown")
-
-    for file in scan.archives_files:
-        file = Path(file)
-        handle_archive(file, folder_path)
-
-        get_folder_object(folder_path)
+    print(Fore.BLUE + "Sorting folder successfully completed." + Style.RESET_ALL)
 
 
 if __name__ == '__main__':

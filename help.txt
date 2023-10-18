@@ -20,3 +20,6 @@ edit text - to edit text of selected note
 delete tag - to delete tag of selected note
 new tags - to add new tags to selected note
 exit / good bye / close - any of these commans will close the bot and save all changes
+sms - sending a text massage
+call - sending a voice message
+sort files - sorting the folder by category

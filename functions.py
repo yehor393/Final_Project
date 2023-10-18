@@ -8,12 +8,12 @@ import main_sorting_files
 from twilio.rest import Client
 from user_config import Config
 
-
 CONFIG_FILE = "bot_config.txt"
 config = Config(CONFIG_FILE)
 notes = NoteBook()
 
-#Luda
+
+# Luda
 def view_notes():
     message = ""
     for note in notes.values():
@@ -22,21 +22,25 @@ def view_notes():
         message = "You have no notes yet"
     return message
 
+
 def add_note(text: str, tags: str) -> str:
     tag_list = str_to_tags(tags)
     note = Note(text, tag_list)
     notes.add_note(note)
     return "Note was successfully added"
 
+
 def delete_note(id: str) -> str:
     notes.delete_note(id)
     return "Note was successfully removed"
+
 
 def edit_text(id: str, new_text: str) -> str:
     note = notes.find_id(id)
     note.edit_text(new_text)
     notes.save()
     return "Note was successfully edited"
+
 
 def add_tags(id: str, tags: str) -> str:
     tag_list = str_to_tags(tags)
@@ -45,11 +49,13 @@ def add_tags(id: str, tags: str) -> str:
     notes.save()
     return f"Tags was successfully added to note with id {id}"
 
+
 def delete_tag(id: str, tag: str) -> str:
     note = notes.find_id(id)
     note.remowe_tag(tag)
     notes.save()
     return "Tags was successfully deleted"
+
 
 def find_by_tag(tags: str, show_desc: bool) -> str:
     intersec = " and " in tags
@@ -59,7 +65,7 @@ def find_by_tag(tags: str, show_desc: bool) -> str:
     for i in range(len(tag_list)):
         if not tag_list[i].startswith("#"):
             tag_list[i] = "#" + tag_list[i]
-    
+
     result = notes.find_by_tag(tag_list, intersec, show_desc)
 
     message = ""
@@ -69,6 +75,7 @@ def find_by_tag(tags: str, show_desc: bool) -> str:
         message = "I didn't find anything. Correct search conditions."
     return message
 
+
 def input_note_params(param: str):
     correct = False
     value = ""
@@ -76,7 +83,7 @@ def input_note_params(param: str):
         if param == "id":
             value = input('please provide a note id: ')
             correct = value in notes
-        
+
         elif param == "text":
             print('please write your note here (duble enter to finish): ')
             value = []
@@ -106,6 +113,7 @@ def input_note_params(param: str):
 
     return value
 
+
 def str_to_tags(text: str) -> [str]:
     tags = []
     for tag in text.split(" "):
@@ -129,7 +137,7 @@ def find_closest_match(user_input, commands):
 def check_command(user_input, commands):
     if user_input in commands:
         return user_input
-    
+
     closest_match = find_closest_match(user_input, commands)
     if closest_match:
         print(closest_match)
@@ -138,10 +146,9 @@ def check_command(user_input, commands):
         return user_input
 
 
-
 # adding new contact/phone number
-def add_contact (name, phone=None, birthday=None, email=None, address=None, note=None): 
-    if not name:  
+def add_contact(name, phone=None, birthday=None, email=None, address=None, note=None):
+    if not name:
         raise CustomError("please provide a name")
     elif name not in phone_book:
         record = Record(name, phone, birthday, email, address, note)
@@ -163,68 +170,66 @@ def add_contact (name, phone=None, birthday=None, email=None, address=None, note
 
         return "new information successfully added to existing contact"
 
-def change_info(): #does not do any actions, for correct functionality of commands only
+
+def change_info():  # does not do any actions, for correct functionality of commands only
     pass
 
-# change the phone number
-def change_phone (name, new_phone, old_phone):
 
+# change the phone number
+def change_phone(name, new_phone, old_phone):
     if not new_phone or not old_phone:
         raise CustomError("please provide a name, a new number and an old number divided by a space")
-    
+
     record = phone_book[name]
     record.amend_phone(name, new_phone, old_phone)
     return "contact successfully changed"
 
 
-def remove_contact(name):   
-
+def remove_contact(name):
     del phone_book[name]
     return "the contact successfully removed"
 
 
 def remove_info(name, field_to_remove, phone=None):
-    
     record = phone_book[name]
     if phone:
         record.remove_phone(phone)
         return "the phone number successfully removed"
-    
+
     elif field_to_remove == 'birthday':
         if hasattr(record, 'birthday'):
             del record.birthday
             return "the birthday successfully removed"
         else:
             raise CustomError("no birthday exist for this contact")
-        
+
     elif field_to_remove == 'email':
         if hasattr(record, 'email'):
             del record.email
             return "the email successfully removed"
         else:
             raise CustomError("no email exist for this contact")
-    
+
     elif field_to_remove == 'address':
         if hasattr(record, 'address'):
             del record.address
             return "the address successfully removed"
         else:
             raise CustomError("no address exist for this contact")
-        
+
     elif field_to_remove == 'note':
         if hasattr(record, 'note'):
-            del record.note 
-            return "the note successfully removed" 
+            del record.note
+            return "the note successfully removed"
         else:
             raise CustomError("no note exist for this contact")
 
 
 # show contact details of user
-def show_contact (name): 
-    
+def show_contact(name):
     record = phone_book[name]
     phone_numbers = []
-        
+
     for item in record.phones:
         phone_numbers.append(item.value)
 
@@ -237,7 +242,7 @@ def show_contact (name):
         birthday_str = record.birthday.value.strftime('%Y-%m-%d')
     else:
         birthday_str = 'no birthday recorded'
-    
+
     if hasattr(record, 'email'):
         email_str = record.email.value
     else:
@@ -289,11 +294,11 @@ def show_page(page):
 
 
 def hello():
-    return("How can I help you? Please type your command")
+    return "How can I help you? Please type your command"
 
 
-def search (search_word):
-    result= []
+def search(search_word):
+    result = []
     for name, record in phone_book.items():
         if len(record.phones) > 0:
             phone_numbers = ', '.join(phone.value for phone in record.phones)
@@ -303,16 +308,15 @@ def search (search_word):
             birthday_str = record.birthday.value.strftime('%Y-%m-%d')
         except AttributeError:
             birthday_str = "no birthday recorded"
-        
+
         try:
             note_str = record.note.value
         except AttributeError:
             note_str = "no note recorded"
 
-        
-        if (search_word in name) or (search_word in phone_numbers) or (search_word == birthday_str) or (search_word in note_str):
+        if (search_word in name) or (search_word in phone_numbers) or (search_word == birthday_str) or (
+                search_word in note_str):
             result.append(show_contact(name))
-            
 
     if result:
         return ';\n'.join(result)
@@ -320,14 +324,14 @@ def search (search_word):
         raise CustomError("nothing found")
 
 
-def dtb(name): 
+def dtb(name):
     record = phone_book[name]
     if not hasattr(record, 'birthday'):
-            raise CustomError ("no birthday recorded")
+        raise CustomError("no birthday recorded")
     return record.days_to_birthday()
 
 
-#shows upcoming birthdays/
+# shows upcoming birthdays/
 def show_birthdays_soon(days):
     result = []
     for name, record in phone_book.items():
@@ -347,7 +351,7 @@ def guide():
             file_content = file.read()
         return file_content
     except FileNotFoundError:
-        raise CustomError("File not found") 
+        raise CustomError("File not found")
 
 
 def sort_files(folder_path):
@@ -357,16 +361,17 @@ def sort_files(folder_path):
 def send_sms(phone_number, message):
     account_sid = config["account_sid"]
     auth_token = config["auth_token"]
-    
+
     client = Client(account_sid, auth_token)
-    
+
     message = client.messages.create(
         from_=config["account_phone"],
         body=message,
         to=phone_number
     )
-    
+
     return message.sid
+
 
 def call(phone_number, message):
     account_sid = config["account_sid"]
@@ -381,11 +386,12 @@ def call(phone_number, message):
 
     return make_call.sid
 
+
 def bot_config():
     if not config.data:
         return False
-    
-    if not "user_folder" in config or not ["user_folder"]:
+
+    if "user_folder" not in config or not ["user_folder"]:
         config["user_folder"] = input_config("user_folder")
     Path(config["user_folder"]).mkdir(exist_ok=True)
 
@@ -394,6 +400,7 @@ def bot_config():
 
     config.save_config()
     return True
+
 
 def input_config(param: str):
     correct = False
@@ -404,14 +411,16 @@ def input_config(param: str):
             value = Path(value)
             correct = True
             response = "Path does not exist!"
-        if not correct:
-            print(response)
-    
+            if not correct:
+                print(response)
+
     return value
+
 
 def close_bot():
     phone_book.save_changes()
     return "Good bye!"
+
 
 commands = {
     "add": add_contact,
