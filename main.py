@@ -6,10 +6,10 @@ close_app = ('exit', 'good bye', 'close')
 
 
 def main():
+    if not bot_config():
+        print("There is no configuration file. Can not work without it! Good bye!")
+        return
     while True:
-        if not bot_config():
-            print("There is no configuration file. Can not work without it! Good bye!")
-            break
         user_input = input("your command (type 'guide' to display list of available commands): ").lower()
 
         result = parse_input(user_input) 

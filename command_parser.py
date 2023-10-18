@@ -134,12 +134,9 @@ def parse_input(user_input):
                     message = input("Enter the SMS message: ")
                     for phone in contact.phones:
                         print(f'Sending to the number {phone}')
-                        try:
-                            send_sms(phone, message)
-                        except Exception as e:
-                            print(f"Error while sending SMS: {e}")
+                        return func(phone, message)
                 else:
-                    print("Contact not found")
+                    return "Contact not found"
 
             elif func == call:
                 contact_name = name_input()
@@ -148,12 +145,9 @@ def parse_input(user_input):
                     message = input("Enter the message: ")
                     for phone in contact.phones:
                         print(f'Calling to the number {phone}')
-                        try:
-                            call(phone, message)
-                        except Exception as e:
-                            print(f"Error while calling: {e}")
+                        return func(phone, message)
                 else:
-                    print("Contact not found")
+                    return "Contact not found"
 
 
             else:  #run func which don't need args. eg.hello, help, show all
