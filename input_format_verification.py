@@ -4,6 +4,21 @@ from classes import phone_book
 from country_codes import country_codes
 import os
 
+def name_input_for_add():
+    def name_validation(name):
+        if not name:
+            return False
+        else: 
+            return name
+        
+    while True:
+        input_name = input('Please provide a contact name: ')
+        name =  name_validation(input_name)
+        if name:
+            return name
+        else:
+            print("Name is mandatory field. Try again")
+
 def name_input():
     def name_validation(name):
         if name not in phone_book:
@@ -85,7 +100,7 @@ def phone_input():
             return None
 
     while True:
-        input_phone = input('Please provide an phone: ')
+        input_phone = input('Please provide a new phone: ')
         phone = phone_format_check(input_phone)
         if phone:
             phone_digits = re.sub(r'[^\d]', '', phone)
@@ -115,4 +130,18 @@ def path_input():
         if folder_path != False:
             return folder_path
         else:
-            print("Provided path is not valid. Try again") 
+            print("Provided path is not valid. Try again")
+
+def phone_index_input(contact):
+    enumerated_phones = enumerate(contact.phones)
+    for index, phone_num in enumerated_phones:
+        phone_number = phone_num.value
+        print(f"{index} is index of phone number {phone_number}")
+    
+    while True:
+        index_input = int(input("Please enter a phone index: "))
+        try:
+            phone = contact.phones[index_input]
+            return phone
+        except IndexError:
+            print ("Phone index not found. Try again")

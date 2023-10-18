@@ -10,7 +10,7 @@ def parse_input(user_input):
             func = commands[request]
 
             if func == add_contact:
-                name = input('please provide a contact name: ')
+                name = name_input_for_add()
                 new_phone_number = phone_input()
                 birth_date = dob_input()
                 email = email_input()
@@ -25,10 +25,12 @@ def parse_input(user_input):
             elif func == change_info:
                 name = name_input()
                 info_to_amend = input('what type of information will be amended (phone / birthday / email / address / note): ')
-                
+                contact = phone_book.get(name) ###
+
                 if info_to_amend == 'phone':
+                    print("Please choose index of the phone to be amended:") 
+                    old_phone_number = str(phone_index_input(contact)) ###
                     new_phone_number = phone_input()
-                    old_phone_number = input('please provide the phone number to be replaced: ') 
                     return change_phone(name, new_phone_number, old_phone_number)
                 
                 elif info_to_amend == 'birthday':
@@ -62,9 +64,11 @@ def parse_input(user_input):
 
             elif func == remove_info: 
                 name = name_input()
+                contact = phone_book.get(name) ###
                 info_to_delete = input('what type of information will be deleted (phone / birthday / email / address / note): ')
                 if info_to_delete == 'phone':
-                    phone_number = phone_input()
+                    print("Please choose index of the phone to be removed:")
+                    phone_number = str(phone_index_input(contact)) ###
                     return func(name, info_to_delete, phone_number)
                 
                 elif info_to_delete != 'phone' and info_to_delete != 'birthday' and info_to_delete != 'email' and info_to_delete != 'address' and info_to_delete != 'note':
@@ -132,23 +136,26 @@ def parse_input(user_input):
                 contact = phone_book.get(contact_name)
                 if contact:
                     message = input("Enter the SMS message: ")
-                    for phone in contact.phones:
-                        print(f'Sending to the number {phone}')
-                        result = func(phone, message)
-                        print(result)
+                    
+                    phone = phone_index_input(contact)
+                    print(f'Sending sms to the number {phone}')
+                    result = func(phone, message)
+                    print(result)
                     return None
                 else:
                     return "Contact not found"
+                
 
             elif func == call:
                 contact_name = name_input()
                 contact = phone_book.get(contact_name)
                 if contact:
                     message = input("Enter the message: ")
-                    for phone in contact.phones:
-                        print(f'Calling to the number {phone}')
-                        result = func(phone, message)
-                        print(result)
+                    
+                    phone = phone_index_input(contact)
+                    print(f'Calling to the number {phone}')
+                    result = func(phone, message)
+                    print(result)
                     return None
                 else:
                     return "Contact not found"
