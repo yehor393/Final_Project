@@ -106,7 +106,7 @@ class Record:
         self.phones.append(Phone(value=phone))
 
     def amend_phone(self, name, new_phone, old_phone): 
-        phone_found = False
+        #phone_found = False
         for stored_phone in self.phones.copy():
             if str(stored_phone) == old_phone:
                 self.phones.remove(stored_phone)

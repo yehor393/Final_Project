@@ -91,7 +91,7 @@ def phone_input():
             phone_digits = re.sub(r'[^\d]', '', phone)
             found_country = None
             for country, code in country_codes.items():
-                if phone_digits.startswith(code):
+                if phone_digits.startswith(str(code)):
                     found_country = country
                     break
             if found_country:
