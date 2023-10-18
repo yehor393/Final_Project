@@ -7,9 +7,8 @@ from pathlib import Path
 import Final_Project.main_sorting_files
 from twilio.rest import Client
 from Final_Project.user_config import Config
+from Final_Project.gen_config import *
 
-
-CONFIG_FILE = "bot_config.txt"
 config = Config(CONFIG_FILE)
 notes = NoteBook()
 
@@ -355,39 +354,54 @@ def sort_files(folder_path):
 
 
 def send_sms(phone_number, message):
+    if "account_sid" not in config or\
+        "auth_token" not in config:
+        return "There option are not configured"
+    
     account_sid = config["account_sid"]
     auth_token = config["auth_token"]
     
     client = Client(account_sid, auth_token)
-    
-    message = client.messages.create(
-        from_=config["account_phone"],
-        body=message,
-        to=phone_number
-    )
-    
-    return message.sid
+    try:
+        message = client.messages.create(
+            from_=config["account_phone"],
+            body=message,
+            to=phone_number)
+        message = f"Message was successfully sended on number {phone_number}!"
+    except Exception as e:
+        raise CustomError(f"{e.args[2]}. Check your calling settings.")
+    return message
 
 def call(phone_number, message):
+    if "account_sid" not in config or\
+        "auth_token" not in config:
+        return "There option are not configured"
+    
     account_sid = config["account_sid"]
     auth_token = config["auth_token"]
     client = Client(account_sid, auth_token)
-
-    make_call = client.calls.create(
-        twiml=f'<Response><Say>{message}</Say></Response>',
-        to=phone_number,
-        from_=config["account_phone"]
-    )
-
-    return make_call.sid
+    try:
+        message = client.calls.create(
+            twiml=f'<Response><Say>{message}</Say></Response>',
+            to=phone_number,
+            from_=config["account_phone"],
+            machine_detection="DetectMessageEnd",
+            machine_detection_timeout=0
+        )
+        message = f"Call on number {phone_number} was successfully doned!"
+    except Exception as e:
+        raise CustomError(f"{e.args[2]}. Check your calling settings.")
+    
+    return message
 
 def bot_config():
     if not config.data:
         return False
-    
-    if not "user_folder" in config or not ["user_folder"]:
+    if not "contacts_per_page" in config or not config["contacts_per_page"].isdecimal():
+        config["contacts_per_page"] = input_config("contacts_per_page")
+
+    if not "user_folder" in config or not create_folder(config["user_folder"]):
         config["user_folder"] = input_config("user_folder")
-    Path(config["user_folder"]).mkdir(exist_ok=True)
 
     notes.file_name = Path(config["user_folder"], config["notebook_file"])
     phone_book.file_name = Path(config["user_folder"], config["addressbook_file"])
@@ -401,13 +415,24 @@ def input_config(param: str):
     while not correct:
         if param == "user_folder":
             value = input("Please enter path to folder where all data will be stored: ")
-            value = Path(value)
-            correct = True
+            correct = create_folder(value)
             response = "Path does not exist!"
+        if param == "contacts_per_page":
+            value = input("Please enter how many contacts per page do you want to see: ")
+            correct = value.isdecimal()
+            response = "It should be a positive decimal value"
         if not correct:
             print(response)
     
     return value
+
+def create_folder(user_string: str) -> bool:
+    path = Path(user_string)
+    try:
+        path.mkdir(exist_ok=True)
+        return True
+    except:
+        return False
 
 def close_bot():
     phone_book.save_changes()

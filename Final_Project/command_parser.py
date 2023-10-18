@@ -84,7 +84,7 @@ def parse_input(user_input):
                   while True:
                     try:
                         days = int(input('Enter the number of days: '))
-                        break  
+                        break  # Вихід із циклу, якщо користувач ввів число правильно
                     except ValueError:
                         print("Please enter a valid number.")
 
@@ -134,12 +134,11 @@ def parse_input(user_input):
                     message = input("Enter the SMS message: ")
                     for phone in contact.phones:
                         print(f'Sending to the number {phone}')
-                        try:
-                            send_sms(phone, message)
-                        except Exception as e:
-                            print(f"Error while sending SMS: {e}")
+                        result = func(phone, message)
+                        print(result)
+                    return None
                 else:
-                    print("Contact not found")
+                    return "Contact not found"
 
             elif func == call:
                 contact_name = name_input()
@@ -148,12 +147,11 @@ def parse_input(user_input):
                     message = input("Enter the message: ")
                     for phone in contact.phones:
                         print(f'Calling to the number {phone}')
-                        try:
-                            call(phone, message)
-                        except Exception as e:
-                            print(f"Error while calling: {e}")
+                        result = func(phone, message)
+                        print(result)
+                    return None
                 else:
-                    print("Contact not found")
+                    return "Contact not found"
 
 
             else:  #run func which don't need args. eg.hello, help, show all

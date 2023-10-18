@@ -1,6 +1,7 @@
 import datetime
 import re
 from Final_Project.classes import phone_book
+from Final_Project.country_codes import country_codes
 import os
 
 def name_input():
@@ -74,23 +75,32 @@ def email_input():
 
 
 def phone_input():
-    def phone_format_check (phone_number):
+    def phone_format_check(phone_number):
         if not phone_number:
+            return None
+        if re.match(r'^\+\d+$', phone_number):
             return phone_number
-        
-        elif not re.match(r'\+\d+$', phone_number):
-            return False
-        
         else:
-            return phone_number
-        
+            print("Invalid phone format. The number must start with "+". Please try again.")
+            return None
+
     while True:
-        input_phone = input('please provide an a phone number: ')
+        input_phone = input('Please provide an phone: ')
         phone = phone_format_check(input_phone)
-        if phone != False:
-            return phone
+        if phone:
+            phone_digits = re.sub(r'[^\d]', '', phone)
+            found_country = None
+            for country, code in country_codes.items():
+                if phone_digits.startswith(str(code)):
+                    found_country = country
+                    break
+            if found_country:
+                print(f"Phone number of : {found_country}")
+                return phone
+            else:
+                print("Country code unknown . Please try again.")
         else:
-            print("Phone number should start with + and contain digits only. Try again")
+            return None
 
 def path_input():
     def path_check(path):
