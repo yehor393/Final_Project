@@ -96,7 +96,7 @@ def phone_input():
         if re.match(r'^\+\d+$', phone_number):
             return phone_number
         else:
-            print("Invalid phone format. The number must start with "+". Please try again.")
+            print("Invalid phone format. The number must start with + and contain digits only. Please try again.")
             return None
 
     while True:
@@ -110,12 +110,12 @@ def phone_input():
                     found_country = country
                     break
             if found_country:
-                print(f"Phone number of : {found_country}")
+                print(f"Phone number of: {found_country}")
                 return phone
             else:
-                print("Country code unknown . Please try again.")
-        else:
-            return None
+                print("Country code unknown. Please try again.")
+        # else:
+        #     return None
 
 def path_input():
     def path_check(path):
