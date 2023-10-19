@@ -21,6 +21,7 @@ delete note - to delete the note by id
 edit text - to edit the text of the selected note
 delete tag - to delete the tag of the selected note
 new tags - to add new tags to the selected note
+find tags - to search notes by tags
 
 sms - sending a text message
 call - sending a voice message
